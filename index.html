@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIMETSU API</title>
+</head>
+<body>
+
+  <form>
+    <fieldset>
+      <legend>希望するカテゴリーを選択してください。</legend>
+      <div>
+        <input type="radio" id="all" name="category" value="all" />
+        <label for="allcharacters">全キャラクター</label>
+        <input type="radio" id="kisatsutai" name="category" value="kisatsutai" />
+        <label for="character1">鬼殺隊</label>
+        <input type="radio" id="hashira" name="category" value="hashira" />
+        <label for="hashira">柱</label>
+        <input type="radio" id="oni" name="category" value="oni" />
+        <label for="oni">鬼</label>
+      </div>
+    </fieldset>
+  </form>
+
+  <div id="top"></div>
+  
+  <script type="module">
+    import {callCharacters } from './index.js';
+
+    // フォーム下のdivタグを取得。２つの処理で使用するので、グローバルコンテキストで定義
+    const topTag = document.querySelector('#top');
+
+    const selectedView = async (category) => {
+
+      try {
+
+        // 非同期でカテゴリー別にJSONデータを取得
+        let designatedCharacters;
+        designatedCharacters = await callCharacters(category);
+  
+  
+        // キャラクターの数だけDOM作成の処理を繰り返す
+        for(let i = 0; i < designatedCharacters.length; i++) {
+  
+          // 親DOMを作成、後でdivタグの子要素として加える
+          const ulTag = document.createElement('ul');
+  
+          // キャラクターの名前を取得してliタグのテキストに挿入、ulタグの子要素として加える
+          const nameTag = document.createElement('li');
+          nameTag.textContent = designatedCharacters[i].name;
+          ulTag.appendChild(nameTag);
+  
+          // キャラクターのカテゴリーを取得してliタグのテキストに挿入、ulタグの子要素として加える
+          const categoryTag = document.createElement('li');
+          categoryTag.textContent = designatedCharacters[i].category;
+          ulTag.appendChild(categoryTag);
+  
+          // キャラクターの画像URLを取得して絶対パスと併せて完全なパスとし、liタグ下にimgタグを作り、必要情報を加える
+          const parentTag = document.createElement('li');
+          const imgTag = document.createElement('img');
+          imgTag.src = 'https://ihatov08.github.io' + designatedCharacters[i].image;
+          imgTag.alt = designatedCharacters[i].name;
+          imgTag.width = 200;
+          imgTag.height = 200;
+          parentTag.appendChild(imgTag);
+          ulTag.appendChild(parentTag);
+  
+          // 最終的にulタグへ名前、カテゴリー、画像を子要素として加えたらulタグをdivタグへ子要素として加える
+          topTag.appendChild(ulTag);
+        }
+      } catch (e){
+        console.error(e);
+      }
+    }
+    // 初期画面を表示するために関数を実行して全キャラクターデータを取得
+    selectedView('all');
+
+    // 複数あるラジオボタンのinputタグを全て取得
+    const input = document.querySelectorAll('input');
+
+    // 繰り返し処理で全てのラジオボタンにイベントハンドラーを設定
+    for(let i = 0; i<input.length; i++) {
+      input[i].addEventListener("click", (event) => {
+        // キャラクター情報が登録されたulタグを全て削除
+        const ulTags = document.querySelectorAll('ul');
+        for(let i = 0; i < ulTags.length; i++) {
+          ulTags[i].remove();
+        }
+        // カテゴリー選択用のフォームを非表示にする
+        const form = document.querySelector('form');
+        form.classList.add('invisible');
+
+        // Loading画面を設定する
+        const loading = document.createElement('div');
+        loading.textContent = "Loading...";
+        loading.classList.add('loading');
+        topTag.appendChild(loading);
+
+        // 2秒後にLoading画面を削除。フォームを再表示して、選択したキャラクター情報を表示する
+        // event.targetでイベントが発生したDOM要素を取得する
+        setTimeout(() => {
+          loading.remove();
+          form.classList.remove('invisible');
+          selectedView(event.target.id);
+        }, 2000);
+      });
+    }
+            
+  </script>
+  <style>
+    #top{
+      display: flex;
+      flex-wrap: wrap;
+    }
+    ul{
+      width: 30%;
+    }
+    li{
+      list-style: none;
+    }
+    .invisible{
+      opacity: 0;
+      visibility: hidden;
+    }
+    .loading{
+      width: 100vw; 
+      font-size: 100px;
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  </style>
+</body>
+</html>
