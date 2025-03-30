@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIMETSU API</title>
+</head>
+<body>
+
+  <form>
+    <fieldset>
+      <legend>希望するカテゴリーを選択してください。</legend>
+      <div>
+        <input type="radio" id="all" name="category" value="all" />
+        <label for="allcharacters">全キャラクター</label>
+        <input type="radio" id="kisatsutai" name="category" value="kisatsutai" />
+        <label for="character1">鬼殺隊</label>
+        <input type="radio" id="hashira" name="category" value="hashira" />
+        <label for="hashira">柱</label>
+        <input type="radio" id="oni" name="category" value="oni" />
+        <label for="oni">鬼</label>
+      </div>
+    </fieldset>
+  </form>
+
+  <div id="top"></div>
+  
+  <script type="module">
+    import { selectedView, setEventListener } from './index.js';
+
+    // 初期画面を表示するために関数を実行して全キャラクターデータを取得
+    selectedView('all');
+    
+    // 複数あるラジオボタンのinputタグを全て取得
+    const elements = document.querySelectorAll('input');
+
+    setEventListener(elements);
+            
+  </script>
+  <style>
+    #top{
+      display: flex;
+      flex-wrap: wrap;
+    }
+    ul{
+      width: 30%;
+    }
+    li{
+      list-style: none;
+    }
+    .invisible{
+      opacity: 0;
+      visibility: hidden;
+    }
+    .loading{
+      width: 100vw; 
+      font-size: 100px;
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  </style>
+</body>
+</html>
