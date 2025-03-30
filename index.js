@@ -14,7 +14,7 @@ const selectedView = async (category) => {
     const designatedCharacters = await callCharacters(category);
 
     // フォーム下のdivタグを取得。
-    const topTag = document.querySelector('#top');
+    const topTag = document.getElementById('top');
 
     // キャラクターの数だけDOM作成の処理を繰り返す
     for(let i = 0; i < designatedCharacters.length; i++) {
@@ -50,4 +50,36 @@ const selectedView = async (category) => {
   }
 }
 
-export { selectedView }
+const setEventListener = function(elements) {
+  // 繰り返し処理で全てのラジオボタンにイベントハンドラーを設定
+  for(let i = 0; i<elements.length; i++) {
+    elements[i].addEventListener("click", (event) => {
+      // キャラクター情報が登録されたulタグを全て削除
+      const ulTags = document.querySelectorAll('ul');
+      for(let i = 0; i < ulTags.length; i++) {
+        ulTags[i].remove();
+      }
+      // フォーム下のdivタグを取得。
+      const topTag = document.getElementById('top');
+      // カテゴリー選択用のフォームを非表示にする
+      const form = document.querySelector('form');
+      form.classList.add('invisible');
+
+      // Loading画面を設定する
+      const loading = document.createElement('div');
+      loading.textContent = "Loading...";
+      loading.classList.add('loading');
+      topTag.appendChild(loading);
+
+      // 2秒後にLoading画面を削除。フォームを再表示して、選択したキャラクター情報を表示する
+      // event.targetでイベントが発生したDOM要素を取得する
+      setTimeout(() => {
+        loading.remove();
+        form.classList.remove('invisible');
+        selectedView(event.target.value);
+      }, 2000);
+    });
+  }
+}
+
+export { selectedView, setEventListener }

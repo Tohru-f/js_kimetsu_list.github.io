@@ -26,44 +26,15 @@
   <div id="top"></div>
   
   <script type="module">
-    import { selectedView } from './index.js';
-
-    // フォーム下のdivタグを取得。
-    const topTag = document.querySelector('#top');
+    import { selectedView, setEventListener } from './index.js';
 
     // 初期画面を表示するために関数を実行して全キャラクターデータを取得
     selectedView('all');
-
+    
     // 複数あるラジオボタンのinputタグを全て取得
-    const inputs = document.querySelectorAll('input');
+    const elements = document.querySelectorAll('input');
 
-    // 繰り返し処理で全てのラジオボタンにイベントハンドラーを設定
-    for(let i = 0; i<inputs.length; i++) {
-      inputs[i].addEventListener("click", (event) => {
-        // キャラクター情報が登録されたulタグを全て削除
-        const ulTags = document.querySelectorAll('ul');
-        for(let i = 0; i < ulTags.length; i++) {
-          ulTags[i].remove();
-        }
-        // カテゴリー選択用のフォームを非表示にする
-        const form = document.querySelector('form');
-        form.classList.add('invisible');
-
-        // Loading画面を設定する
-        const loading = document.createElement('div');
-        loading.textContent = "Loading...";
-        loading.classList.add('loading');
-        topTag.appendChild(loading);
-
-        // 2秒後にLoading画面を削除。フォームを再表示して、選択したキャラクター情報を表示する
-        // event.targetでイベントが発生したDOM要素を取得する
-        setTimeout(() => {
-          loading.remove();
-          form.classList.remove('invisible');
-          selectedView(event.target.value);
-        }, 2000);
-      });
-    }
+    setEventListener(elements);
             
   </script>
   <style>
