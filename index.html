@@ -26,62 +26,20 @@
   <div id="top"></div>
   
   <script type="module">
-    import {callCharacters } from './index.js';
+    import { selectedView } from './index.js';
 
-    // フォーム下のdivタグを取得。２つの処理で使用するので、グローバルコンテキストで定義
+    // フォーム下のdivタグを取得。
     const topTag = document.querySelector('#top');
 
-    const selectedView = async (category) => {
-
-      try {
-
-        // 非同期でカテゴリー別にJSONデータを取得
-        let designatedCharacters;
-        designatedCharacters = await callCharacters(category);
-  
-  
-        // キャラクターの数だけDOM作成の処理を繰り返す
-        for(let i = 0; i < designatedCharacters.length; i++) {
-  
-          // 親DOMを作成、後でdivタグの子要素として加える
-          const ulTag = document.createElement('ul');
-  
-          // キャラクターの名前を取得してliタグのテキストに挿入、ulタグの子要素として加える
-          const nameTag = document.createElement('li');
-          nameTag.textContent = designatedCharacters[i].name;
-          ulTag.appendChild(nameTag);
-  
-          // キャラクターのカテゴリーを取得してliタグのテキストに挿入、ulタグの子要素として加える
-          const categoryTag = document.createElement('li');
-          categoryTag.textContent = designatedCharacters[i].category;
-          ulTag.appendChild(categoryTag);
-  
-          // キャラクターの画像URLを取得して絶対パスと併せて完全なパスとし、liタグ下にimgタグを作り、必要情報を加える
-          const parentTag = document.createElement('li');
-          const imgTag = document.createElement('img');
-          imgTag.src = 'https://ihatov08.github.io' + designatedCharacters[i].image;
-          imgTag.alt = designatedCharacters[i].name;
-          imgTag.width = 200;
-          imgTag.height = 200;
-          parentTag.appendChild(imgTag);
-          ulTag.appendChild(parentTag);
-  
-          // 最終的にulタグへ名前、カテゴリー、画像を子要素として加えたらulタグをdivタグへ子要素として加える
-          topTag.appendChild(ulTag);
-        }
-      } catch (e){
-        console.error(e);
-      }
-    }
     // 初期画面を表示するために関数を実行して全キャラクターデータを取得
     selectedView('all');
 
     // 複数あるラジオボタンのinputタグを全て取得
-    const input = document.querySelectorAll('input');
+    const inputs = document.querySelectorAll('input');
 
     // 繰り返し処理で全てのラジオボタンにイベントハンドラーを設定
-    for(let i = 0; i<input.length; i++) {
-      input[i].addEventListener("click", (event) => {
+    for(let i = 0; i<inputs.length; i++) {
+      inputs[i].addEventListener("click", (event) => {
         // キャラクター情報が登録されたulタグを全て削除
         const ulTags = document.querySelectorAll('ul');
         for(let i = 0; i < ulTags.length; i++) {
@@ -102,7 +60,7 @@
         setTimeout(() => {
           loading.remove();
           form.classList.remove('invisible');
-          selectedView(event.target.id);
+          selectedView(event.target.value);
         }, 2000);
       });
     }
